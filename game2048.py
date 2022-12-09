@@ -20,7 +20,7 @@ class Board:
     def done(self):
         return self.board.all()
 
-    def __move_helper(self, board):
+    def _move_helper(self, board):
         def merge(prev, cur):
             if prev[-1] == cur:
                 self.score += cur * 2
@@ -41,15 +41,15 @@ class Board:
         self.board[tuple(loc)] = generated
 
     def move(self, act):  # right=0, down=1, left=2, up=3
-        act = act if type(act) == int else self.KEY_MAP.get(act, None)
-        if act is not None:
-            board = np.rot90(self.board, k=act)
-            board = self.__move_helper(board)
-            self.board = np.rot90(board, k=-act)
+        board = np.rot90(self.board, k=act)
+        board = self._move_helper(board)
+        self.board = np.rot90(board, k=-act)
 
     def step(self, act):
-        self.move(act)
-        self.generate()
+        act = act if type(act) == int else self.KEY_MAP.get(act, None)
+        if act is not None:
+            self.move(act)
+            self.generate()
 
     def reset(self):
         self.board = np.zeros((self.n, self.n), dtype=self.board.dtype)
